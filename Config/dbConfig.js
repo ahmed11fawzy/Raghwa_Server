@@ -12,7 +12,7 @@ const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connected to SQL Server via Sequelize");
-    await sequelize.sync({ force: false }); // Synchronize models with the database and apply changes
+    await sequelize.sync({ force: true }); // Synchronize models with the database and apply changes
   } catch (err) {
     console.error("Database connection failed:", err);
     process.exit(1);
