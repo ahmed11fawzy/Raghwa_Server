@@ -1,19 +1,30 @@
+// ! This file is used for associations between models
+
 const User = require("./userModel");
-const Company = require("./companyModel");
-const Branch = require("./branchesModel");
-const Storage = require("./storageModel");
-// Define relationships
-//relations between Branch and Company
-Company.hasMany(Branch, {
-  foreignKey: "companyId",
-  as: "branches",
-  onDelete: "RESTRICT",
+const Product = require("./productModel");
+const Service = require("./serviceModel");
+const ProductService = require("./product_serviceModel");
+
+// TODO 1) relations between  Product , Service & ProductService
+
+// Define N:M relationships
+Service.belongsToMany(Product, {
+  through: ProductService,
+  foreignKey: "serviceId",
+  otherKey: "productId",
 });
-Branch.belongsTo(Company, {
-  foreignKey: "companyId",
-  as: "company",
-  onDelete: "RESTRICT",
+Product.belongsToMany(Service, {
+  through: ProductService,
+  foreignKey: "productId",
+  otherKey: "serviceId",
 });
+
+// Make sure to apply associations to the junction table as well
+ProductService.belongsTo(Service, { foreignKey: "serviceId" });
+ProductService.belongsTo(Product, { foreignKey: "productId" });
+
+Service.hasMany(ProductService, { foreignKey: "serviceId" });
+Product.hasMany(ProductService, { foreignKey: "productId" });
 
 //relations between Storage and Branch
 Branch.hasMany(Storage, {
@@ -30,7 +41,8 @@ Storage.belongsTo(Branch, {
 // Export models
 module.exports = {
   User,
-  Company,
-  Branch,
-  Storage,
+
+  Product,
+  Service,
+  ProductService,
 };
