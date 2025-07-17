@@ -12,9 +12,10 @@ const { connectDB } = require("./Config/dbConfig");
 const appError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
-const companyRoutes = require("./routes/companyRoutes");
-const branchRoutes = require("./routes/branchesRoutes");
-const storageRoutes = require("./routes/storageRoutes");
+
+const serviceRouter = require("./routes/serviceRoutes");
+const productRouter = require("./routes/productRoutes");
+const ProductServiceRouter = require("./routes/ProductServiceRouter");
 
 // ! start express app & connect to db
 
@@ -65,11 +66,13 @@ app.use((req, res, next) => {
   console.log(req.cookies);
   next();
 });
+
 // ! Routes
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/companies", companyRoutes);
-app.use("/api/v1/branches", branchRoutes);
-app.use("/api/v1/storages", storageRoutes);
+
+app.use("/api/v1/services", serviceRouter);
+app.use("/api/v1/products", productRouter);
+app.use("/api/v1/products-services", ProductServiceRouter);
 
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
