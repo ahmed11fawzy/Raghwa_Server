@@ -12,6 +12,9 @@ const { connectDB } = require("./Config/dbConfig");
 const appError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
+const companyRoutes = require("./routes/companyRoutes");
+const branchRoutes = require("./routes/branchesRoutes");
+const storageRoutes = require("./routes/storageRoutes");
 
 // ! start express app & connect to db
 
@@ -64,6 +67,9 @@ app.use((req, res, next) => {
 });
 // ! Routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/companies", companyRoutes);
+app.use("/api/v1/branches", branchRoutes);
+app.use("/api/v1/storages", storageRoutes);
 
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
