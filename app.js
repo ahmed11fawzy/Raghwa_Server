@@ -17,7 +17,7 @@ const serviceRouter = require("./routes/serviceRoutes");
 const productRouter = require("./routes/productRoutes");
 const storageRouter = require("./routes/storageRoutes");
 const companyRouter = require("./routes/companyRoutes");
-
+const branchRouter = require("./routes/branchesRoutes");
 // ! start express app & connect to db
 
 const app = express();
@@ -71,7 +71,7 @@ app.use((req, res, next) => {
 // ! Routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/companies", companyRouter);
-app.use("/api/v1/branches", companyRouter);
+app.use("/api/v1/branches", branchRouter);
 app.use("/api/v1/storages", storageRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);

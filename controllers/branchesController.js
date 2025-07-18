@@ -1,18 +1,5 @@
-const { Branch, Company } = require("../Model");
+const { Branch, Storage, Company } = require("../Model");
 const AppError = require("../utils/appError");
-
-// Create branch
-exports.createBranch = async (req, res, next) => {
-  try {
-    if (!req.body.companyId) {
-      throw new AppError("Company ID is required", 400);
-    }
-    const branch = await Branch.create(req.body);
-    res.status(201).json({ success: true, data: branch });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Get all branches
 exports.getAllBranches = async (req, res) => {
@@ -69,5 +56,24 @@ exports.deleteBranch = async (req, res) => {
     res.status(200).json({ success: true, message: "Branch deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.createStorage = async (req, res) => {
+  try {
+    const branchId = req.params.id;
+    const storage = await Storage.create({ branchId, ...req.body });
+    res.status(201).json({ success: true, data: storage });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.getBranchStorages = async (req, res, next) => {
+  try {
+    const storages = await Storage.findAll({ where: { branchId: req.params.id } });
+    res.status(200).json({ status: "success", data: storages });
+  } catch (err) {
+    next(err);
   }
 };
