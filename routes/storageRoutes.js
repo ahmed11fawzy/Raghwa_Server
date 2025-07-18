@@ -4,7 +4,7 @@ const router = express.Router();
 const storageController = require("../controllers/storageController");
 
 router.route("/").post(storageController.createStorage).get(storageController.getAllStorages);
-
+router.route("/:id/products").post(storageController.addProductToStorage);
 router
   .route("/:id")
   .get(storageController.getStorageById)

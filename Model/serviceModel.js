@@ -36,6 +36,10 @@ const Service = sequelize.define("Service", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Service;
