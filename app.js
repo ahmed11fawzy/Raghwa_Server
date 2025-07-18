@@ -70,11 +70,11 @@ app.use((req, res, next) => {
 
 // ! Routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/companies", companyRouter);
+app.use("/api/v1/branches", companyRouter);
+app.use("/api/v1/storages", storageRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);
-app.use("/api/v1/storage", storageRouter);
-app.use("/api/v1/company", companyRouter);
-
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));
