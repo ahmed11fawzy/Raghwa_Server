@@ -1,5 +1,6 @@
 // controllers/storageController.js
 const { Storage, Branch } = require("../Model");
+const ProductStorage = require("../Model/product_storageModel");
 
 // Create Storage
 exports.createStorage = async (req, res) => {
@@ -11,6 +12,14 @@ exports.createStorage = async (req, res) => {
   }
 };
 
+exports.addProductToStorage = async (req, res, next) => {
+  try {
+    const storage = await ProductStorage.create(req.body);
+    res.status(201).json({ success: true, data: storage });
+  } catch (error) {
+    next(err);
+  }
+};
 // Get All Storages
 exports.getAllStorages = async (req, res) => {
   try {

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../Config/dbConfig");
 
-const Storage = sequelize.define("storage", {
+const Storage = sequelize.define("Storage", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

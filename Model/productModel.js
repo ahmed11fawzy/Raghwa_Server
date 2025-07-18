@@ -10,11 +10,28 @@ const Product = sequelize.define("Product", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  mainCategory: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  subCategory: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  code: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  price: {
+  cost: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
@@ -25,16 +42,34 @@ const Product = sequelize.define("Product", {
   isActive: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   },
-  type: {
+  addedDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  expiryDate: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  unit: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  code: {
-    type: DataTypes.STRING(10),
-    defaultValue: DataTypes.UUIDV4,
+  alternativeUnit: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  barcode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,
+  },
+  supplierId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
+    unique: true,
   },
 });
 

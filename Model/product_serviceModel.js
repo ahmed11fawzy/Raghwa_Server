@@ -28,12 +28,8 @@ const ProductService = sequelize.define("ProductService", {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  price: {
+  servicePrice: {
     type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  duration: {
-    type: DataTypes.INTEGER,
     allowNull: false,
   },
 });

@@ -1,25 +1,28 @@
-const { Company } = require("../Model");
+const Company = require("../Model/companyModel");
 const appError = require("../utils/appError");
 
 // Create a new company
 exports.createCompany = async (req, res, next) => {
   try {
-    if (req.body.email) {
-      const existingCompany = await Company.findOne({ where: { email: req.body.email } });
-      if (existingCompany) {
-        throw new appError("Company with this email already exists", 400);
-      }
-    }
     const company = await Company.create(req.body);
-    if (!company) {
-      throw new appError("Failed to create company", 400);
-    }
     res.status(201).json({
-      success: true,
+      status: "success",
       data: company,
     });
   } catch (err) {
     next(err);
+  }
+};
+
+exports.getAllCompanies = async (req, res, next) => {
+  try {
+    const companies = await Company.findAll();
+    res.status(200).json({
+      status: "success",
+      data: companies,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 

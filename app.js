@@ -15,7 +15,8 @@ const userRouter = require("./routes/userRoutes");
 
 const serviceRouter = require("./routes/serviceRoutes");
 const productRouter = require("./routes/productRoutes");
-const ProductServiceRouter = require("./routes/ProductServiceRouter");
+const storageRouter = require("./routes/storageRoutes");
+const companyRouter = require("./routes/companyRoutes");
 
 // ! start express app & connect to db
 
@@ -69,10 +70,10 @@ app.use((req, res, next) => {
 
 // ! Routes
 app.use("/api/v1/users", userRouter);
-
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);
-app.use("/api/v1/products-services", ProductServiceRouter);
+app.use("/api/v1/storage", storageRouter);
+app.use("/api/v1/company", companyRouter);
 
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
