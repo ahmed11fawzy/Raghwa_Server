@@ -1,5 +1,7 @@
-const Company = require("../Model/companyModel");
+const { where } = require("sequelize");
+
 const appError = require("../utils/appError");
+const { Company, Branch } = require("../Model");
 
 // Create a new company
 exports.createCompany = async (req, res, next) => {
@@ -73,6 +75,28 @@ exports.deleteCompany = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Company deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.createBranch = async (req, res, next) => {
+  try {
+    const companyId = req.params.id;
+    const branch = await Branch.create({ companyId, ...req.body });
+    res.status(201).json({ success: true, data: branch });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getCompanyBranches = async (req, res, next) => {
+  try {
+    const branches = await Branch.findAll({ where: { companyId: req.params.id } });
+    res.status(200).json({
+      success: true,
+      data: branches,
     });
   } catch (error) {
     next(error);

@@ -69,7 +69,6 @@ const Product = sequelize.define("Product", {
   supplierId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
   },
 });
 

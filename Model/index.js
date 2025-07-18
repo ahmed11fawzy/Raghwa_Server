@@ -57,11 +57,22 @@ Storage.belongsToMany(Product, {
   otherKey: "productId",
 });
 
+// العلاقات داخل جدول ProductStorage
+ProductStorage.belongsTo(Product, { foreignKey: "productId" });
+ProductStorage.belongsTo(Storage, { foreignKey: "storageId" });
+
+// ولو هتحتاج ترجع العكس:
+Product.hasMany(ProductStorage, { foreignKey: "productId" });
+Storage.hasMany(ProductStorage, { foreignKey: "storageId" });
+
 // Export models
 module.exports = {
   User,
-
+  Storage,
+  Branch,
+  ProductStorage,
   Product,
   Service,
   ProductService,
+  Company,
 };

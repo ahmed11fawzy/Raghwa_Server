@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const branchController = require("../controllers/branchesController");
-router.route("/").post(branchController.createBranch).get(branchController.getAllBranches);
+const storageController = require("../controllers/storageController");
+
+router.route("/").get(branchController.getAllBranches);
+router.route("/:id/storages").post(branchController.createStorage).get(branchController.getBranchStorages);
 router
   .route("/:id")
   .get(branchController.getBranchById)
