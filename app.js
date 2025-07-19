@@ -12,7 +12,7 @@ const { connectDB } = require("./Config/dbConfig");
 const appError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
-
+const cors = require("cors"); // Import cors
 const serviceRouter = require("./routes/serviceRoutes");
 const productRouter = require("./routes/productRoutes");
 const storageRouter = require("./routes/storageRoutes");
@@ -24,10 +24,20 @@ const app = express();
 
 // ! Middlewares
 
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow requests from your frontend
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+    credentials: true, // Allow cookies or credentials if needed
+  })
+);
+
 app.use(express.static(path.join(__dirname, "public")));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+app.use("/Uploads", express.static(path.join(__dirname, "Uploads")));
 
 const rateLimitter = rateLimit({
   max: 100,

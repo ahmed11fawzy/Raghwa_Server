@@ -2,7 +2,7 @@ const { where } = require("sequelize");
 
 const appError = require("../utils/appError");
 const { Company, Branch } = require("../Model");
-
+const { uploadFile } = require("../utils/fileUpload");
 // Create a new company
 exports.createCompany = async (req, res, next) => {
   try {
@@ -84,7 +84,27 @@ exports.deleteCompany = async (req, res) => {
 exports.createBranch = async (req, res, next) => {
   try {
     const companyId = req.params.id;
-    const branch = await Branch.create({ companyId, ...req.body });
+    const { name, address, phoneNumber, email, zone, isActive } = req.body;
+
+    const icon = `/Uploads/${req.file.filename}`; // المسار النصي
+
+    const company = await Company.findByPk(companyId);
+    if (!company) throw new appError("Company not found", 404);
+
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file); // للتصحيح
+
+    const branch = await Branch.create({
+      companyId,
+      name,
+      icon, // حفظ المسار النصي
+      address,
+      phoneNumber,
+      email,
+      zone: zone || null,
+      isActive: isActive === "true" || isActive === true,
+    });
+
     res.status(201).json({ success: true, data: branch });
   } catch (error) {
     next(error);
@@ -102,3 +122,6 @@ exports.getCompanyBranches = async (req, res, next) => {
     next(error);
   }
 };
+
+// Middleware لرفع الملف
+exports.uploadBranchIcon = uploadFile("icon");

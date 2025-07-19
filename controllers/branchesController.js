@@ -5,7 +5,7 @@ const AppError = require("../utils/appError");
 exports.getAllBranches = async (req, res) => {
   try {
     const branches = await Branch.findAll({
-      include: { model: Company, as: "company" }, // Include company info
+      include: { model: Company, as: "Company" }, // Include company info
     });
     res.status(200).json({ success: true, data: branches });
   } catch (error) {
