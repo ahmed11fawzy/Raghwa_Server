@@ -21,16 +21,21 @@ const ProductService = sequelize.define("ProductService", {
     },
   },
   quantity: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    validate: {
+      min: 0,
+    },
   },
-  cost: {
-    type: DataTypes.FLOAT,
+  unitCostAtTime: {
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    comment: "Unit cost at the time of service creation",
   },
-  servicePrice: {
-    type: DataTypes.FLOAT,
+  totalCost: {
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    comment: "quantity * unitCostAtTime",
   },
 });
 

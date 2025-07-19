@@ -41,7 +41,7 @@ const Branch = sequelize.define("branch", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "companies", // اسم الجدول اللي راجع منه الـ FK
+      model: "Companies", // اسم الجدول اللي راجع منه الـ FK
       key: "id",
     },
   },
