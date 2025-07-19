@@ -42,15 +42,15 @@ const Service = sequelize.define("Service", {
   },
   profitMarginPercent: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   totalCost: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   finalPrice: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
 });
 
