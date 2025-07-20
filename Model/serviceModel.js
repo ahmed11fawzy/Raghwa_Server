@@ -26,19 +26,31 @@ const Service = sequelize.define("Service", {
   isActive: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   },
   targetCar: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   Image: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   duration: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
+  },
+  profitMarginPercent: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  totalCost: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  finalPrice: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
   },
 });
 
