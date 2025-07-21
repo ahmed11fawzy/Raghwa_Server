@@ -1,5 +1,4 @@
 const { where } = require("sequelize");
-
 const appError = require("../utils/appError");
 const { Company, Branch } = require("../Model");
 const { uploadFile } = require("../utils/fileUpload");
@@ -7,6 +6,7 @@ const { uploadFile } = require("../utils/fileUpload");
 exports.createCompany = async (req, res, next) => {
   try {
     const company = await Company.create(req.body);
+    if (!company) throw new appError("Company already exists", 400); // Check if company already exists
     res.status(201).json({
       status: "success",
       data: company,
