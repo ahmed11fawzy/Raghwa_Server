@@ -18,6 +18,8 @@ const productRouter = require("./routes/productRoutes");
 const storageRouter = require("./routes/storageRoutes");
 const companyRouter = require("./routes/companyRoutes");
 const branchRouter = require("./routes/branchesRoutes");
+const compositeProductRoutes = require("./routes/compositeProductsRoutes");
+
 // ! start express app & connect to db
 
 const app = express();
@@ -85,6 +87,7 @@ app.use("/api/v1/branches", branchRouter);
 app.use("/api/v1/storages", storageRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/compositeproducts", compositeProductRoutes);
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));

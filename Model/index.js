@@ -8,6 +8,8 @@ const Branch = require("./branchesModel");
 const Storage = require("./storageModel");
 const ProductStorage = require("./product_storageModel");
 const Company = require("./companyModel");
+const CompositeProduct = require("./composite_products");
+const CompositeProductItem = require("./composite_product_itemsModel");
 
 // TODO 1) relations between  Product , Service & ProductService
 
@@ -65,6 +67,26 @@ ProductStorage.belongsTo(Storage, { foreignKey: "storageId" });
 Product.hasMany(ProductStorage, { foreignKey: "productId" });
 Storage.hasMany(ProductStorage, { foreignKey: "storageId" });
 
+// العلاقة Many-to-Many بين المنتج المركب والمنتجات العادية
+CompositeProduct.belongsToMany(Product, {
+  through: CompositeProductItem,
+  foreignKey: "compositeProductId",
+  otherKey: "productId",
+});
+
+Product.belongsToMany(CompositeProduct, {
+  through: CompositeProductItem,
+  foreignKey: "productId",
+  otherKey: "compositeProductId",
+});
+
+// علاقات مباشرة للجدول الوسيط
+CompositeProductItem.belongsTo(Product, { foreignKey: "productId" });
+CompositeProductItem.belongsTo(CompositeProduct, { foreignKey: "compositeProductId" });
+
+Product.hasMany(CompositeProductItem, { foreignKey: "productId" });
+CompositeProduct.hasMany(CompositeProductItem, { foreignKey: "compositeProductId" });
+
 // Export models
 module.exports = {
   User,
@@ -75,4 +97,6 @@ module.exports = {
   Service,
   ProductService,
   Company,
+  CompositeProduct,
+  CompositeProductItem,
 };
