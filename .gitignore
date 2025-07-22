@@ -30,4 +30,4 @@ logs/
 
 # OS specific files
 .DS_Store
-Thumbs.db 
+Thumbs.db service-account.json
