@@ -117,7 +117,7 @@ exports.deleteCompany = async (req, res, next) => {
     next(error);
   }
 };
-const branchFileFields = ["branchImage", "licenceAttachment", "anotherAttachments"];
+const branchFileFields = ["branchImageAttachment", "licenceAttachment", "anotherAttachments"];
 
 // إنشاء فرع جديد
 exports.createBranch = async (req, res, next) => {

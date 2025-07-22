@@ -4,12 +4,20 @@ const branchController = require("../controllers/branchesController");
 const storageController = require("../controllers/storageController");
 const { dynamicUpload } = require("../middlewares/fileUpload");
 
-const branchFileFields = ["branchImage", "licenceAttachment", "anotherAttachments"];
+const branchFileFields = ["branchImageAttachment", "licenceAttachment", "anotherAttachments"];
+const storageFileFields = [
+  "storageImageAttachment",
+  "licenceAttachment",
+  "safetyCertificationAttachment",
+  "WarehousePlansAttachment",
+  "inventoryReportsAttachment",
+  "anotherAttachments",
+];
 
 router.route("/").get(branchController.getAllBranches);
 router
   .route("/:id/storages")
-  .post(dynamicUpload(branchFileFields), branchController.createStorage)
+  .post(dynamicUpload(storageFileFields), branchController.createStorage)
   .get(branchController.getBranchStorages);
 router
   .route("/:id")

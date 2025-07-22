@@ -1,4 +1,6 @@
 const { Product, Storage, Branch, ProductStorage } = require("../Model");
+const appError = require("../utils/appError");
+const { uploadFilesLocally } = require("../middlewares/fileUpload");
 
 // Get All Storages
 exports.getAllStorages = async (req, res) => {
@@ -25,15 +27,34 @@ exports.getStorageById = async (req, res) => {
   }
 };
 
+const storageFileFields = [
+  "storageImageAttachment",
+  "licenceAttachment",
+  "safetyCertificationAttachment",
+  "WarehousePlansAttachment",
+  "inventoryReportsAttachment",
+  "anotherAttachments",
+];
 // Update Storage
-exports.updateStorage = async (req, res) => {
+exports.updateStorage = async (req, res, next) => {
   try {
     const storage = await Storage.findByPk(req.params.id);
-    if (!storage) return res.status(404).json({ success: false, message: "Storage not found" });
-    await storage.update(req.body);
+    if (!storage) {
+      throw new appError("Storage not found", 404);
+    }
+    // معالجة الملفات المرفوعة محليًا إذا وُجدت
+    const uploadedFiles = await uploadFilesLocally(req.files, storageFileFields);
+
+    // تحديث البيانات مع مسارات الملفات الجديدة
+    const updateData = { ...req.body };
+    uploadedFiles.forEach((file) => {
+      updateData[file.fieldName] = file.link;
+    });
+
+    await storage.update(updateData);
     res.status(200).json({ success: true, data: storage });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    next(error);
   }
 };
 
