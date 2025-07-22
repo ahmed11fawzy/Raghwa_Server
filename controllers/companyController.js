@@ -117,7 +117,7 @@ exports.deleteCompany = async (req, res, next) => {
     next(error);
   }
 };
-const branchFileFields = ["icon"];
+const branchFileFields = ["branchImage", "licenceAttachment", "anotherAttachments"];
 
 // إنشاء فرع جديد
 exports.createBranch = async (req, res, next) => {
@@ -127,21 +127,12 @@ exports.createBranch = async (req, res, next) => {
     // معالجة ملف الأيقونة المرفوع محليًا إذا وُجد
     const uploadedFiles = await uploadFilesLocally(req.files, branchFileFields);
 
-    // إعداد بيانات الفرع
-    const branchData = {
-      companyId,
-      name: req.body.name,
-      address: req.body.address,
-      phoneNumber: req.body.phoneNumber,
-      email: req.body.email,
-      zone: req.body.zone || null,
-      isActive: req.body.isActive === "true" || req.body.isActive === true,
-    };
+    const branchData = { ...req.body };
+    branchData.companyId = companyId;
 
-    // إضافة مسار الأيقونة إذا تم رفعها
-    if (uploadedFiles.length > 0) {
-      branchData.icon = uploadedFiles[0].link;
-    }
+    uploadedFiles.forEach((file) => {
+      branchData[file.fieldName] = file.link;
+    });
 
     // التحقق من وجود الشركة
     const company = await Company.findByPk(companyId);
