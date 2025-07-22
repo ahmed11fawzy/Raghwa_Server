@@ -15,7 +15,7 @@ const companyFileFields = [
   "symbol",
 ];
 
-const branchFileFields = ["branchImage", "licenceAttachment", "anotherAttachments"];
+const branchFileFields = ["branchImageAttachment", "licenceAttachment", "anotherAttachments"];
 
 router
   .route("/")

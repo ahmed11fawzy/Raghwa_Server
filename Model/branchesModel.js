@@ -100,7 +100,7 @@ const Branch = sequelize.define("branch", {
 
   // ! Attachments
 
-  branchImage: {
+  branchImageAttachment: {
     type: DataTypes.STRING,
     allowNull: true,
   },

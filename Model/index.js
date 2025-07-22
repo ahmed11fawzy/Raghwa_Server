@@ -44,8 +44,8 @@ Storage.belongsTo(Branch, {
   onDelete: "RESTRICT",
 });
 
-Company.hasMany(Branch, { foreignKey: "companyId" });
-Branch.belongsTo(Company, { foreignKey: "companyId" });
+Company.hasMany(Branch, { foreignKey: "companyId", as: "branches" });
+Branch.belongsTo(Company, { foreignKey: "companyId", as: "company" });
 
 Product.belongsToMany(Storage, {
   through: ProductStorage,

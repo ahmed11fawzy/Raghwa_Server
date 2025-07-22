@@ -7,28 +7,33 @@ const Storage = sequelize.define("storage", {
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+
+  // ! Storage information
+  arabicName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
+  englishName: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
-  address: {
+  code: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  storageType: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  storageCapacity: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
-  phoneNumber: {
-    type: DataTypes.STRING,
+  currentStock: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
-  symbol: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  logo: {
+  description: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -37,6 +42,83 @@ const Storage = sequelize.define("storage", {
     allowNull: false,
     defaultValue: true,
   },
+
+  // ! Contact information
+
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  telephoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+
+  // ! Address information
+
+  country: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  neighborhood: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  street: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  postalCode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  // other fields
+  manager: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  supervisor: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  // ! Attachments
+  storageImageAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  licenceAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  safetyCertificationAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  WarehousePlansAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  inventoryReportsAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  anotherAttachments: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
   branchId: {
     type: DataTypes.INTEGER,
     allowNull: false,
