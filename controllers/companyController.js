@@ -1,12 +1,37 @@
 const { where } = require("sequelize");
 const appError = require("../utils/appError");
 const { Company, Branch } = require("../Model");
-const { uploadFile } = require("../utils/fileUpload");
-// Create a new company
+const { uploadFilesLocally } = require("../middlewares/fileUpload");
+
+// حقول الملفات في موديل Company
+const companyFileFields = [
+  "commercialRegistrationNumberAttachment",
+  "taxRegistrationNumberAttachment",
+  "licenceAttachment",
+  "qualityCertificateAttachment",
+  "logoAttachment",
+  "buildingsAttachment",
+  "anotherAttachments",
+  "symbol",
+];
+
+// إنشاء شركة جديدة
 exports.createCompany = async (req, res, next) => {
   try {
-    const company = await Company.create(req.body);
-    if (!company) throw new appError("Company already exists", 400); // Check if company already exists
+    // استخدام Middleware لرفع الملفات تم تهيئته في الـ router
+    // معالجة الملفات المرفوعة محليًا
+    const uploadedFiles = await uploadFilesLocally(req.files, companyFileFields);
+
+    // إعداد البيانات مع مسارات الملفات
+    const companyData = { ...req.body };
+    uploadedFiles.forEach((file) => {
+      companyData[file.fieldName] = file.link;
+    });
+
+    // إنشاء الشركة
+    const company = await Company.create(companyData);
+    if (!company) throw new appError("الشركة موجودة بالفعل", 400);
+
     res.status(201).json({
       status: "success",
       data: company,
@@ -16,6 +41,7 @@ exports.createCompany = async (req, res, next) => {
   }
 };
 
+// جلب كل الشركات
 exports.getAllCompanies = async (req, res, next) => {
   try {
     const companies = await Company.findAll();
@@ -28,12 +54,12 @@ exports.getAllCompanies = async (req, res, next) => {
   }
 };
 
-// Get single company by ID
+// جلب شركة بـ ID
 exports.getCompanyById = async (req, res, next) => {
   try {
     const company = await Company.findByPk(req.params.id);
     if (!company) {
-      throw new appError("Company not found", 404);
+      throw new appError("الشركة غير موجودة", 404);
     }
     res.status(200).json({
       success: true,
@@ -44,14 +70,25 @@ exports.getCompanyById = async (req, res, next) => {
   }
 };
 
-// Update company
+// تحديث شركة
 exports.updateCompany = async (req, res, next) => {
   try {
     const company = await Company.findByPk(req.params.id);
     if (!company) {
-      throw new appError("Company not found", 404);
+      throw new appError("الشركة غير موجودة", 404);
     }
-    await company.update(req.body);
+
+    // معالجة الملفات المرفوعة محليًا إذا وُجدت
+    const uploadedFiles = await uploadFilesLocally(req.files, companyFileFields);
+
+    // تحديث البيانات مع مسارات الملفات الجديدة
+    const updateData = { ...req.body };
+    uploadedFiles.forEach((file) => {
+      updateData[file.fieldName] = file.link;
+    });
+
+    // تحديث الشركة
+    await company.update(updateData);
 
     res.status(200).json({
       success: true,
@@ -62,48 +99,56 @@ exports.updateCompany = async (req, res, next) => {
   }
 };
 
-// Delete company
-exports.deleteCompany = async (req, res) => {
+// حذف شركة
+exports.deleteCompany = async (req, res, next) => {
   try {
     const company = await Company.findByPk(req.params.id);
     if (!company) {
-      throw new appError("Company not found", 404);
+      throw new appError("الشركة غير موجودة", 404);
     }
 
     await company.destroy();
 
     res.status(200).json({
       success: true,
-      message: "Company deleted successfully",
+      message: "تم حذف الشركة بنجاح",
     });
   } catch (error) {
     next(error);
   }
 };
+const branchFileFields = ["icon"];
 
+// إنشاء فرع جديد
 exports.createBranch = async (req, res, next) => {
   try {
     const companyId = req.params.id;
-    const { name, address, phoneNumber, email, zone, isActive } = req.body;
 
-    const icon = `/Uploads/${req.file.filename}`; // المسار النصي
+    // معالجة ملف الأيقونة المرفوع محليًا إذا وُجد
+    const uploadedFiles = await uploadFilesLocally(req.files, branchFileFields);
 
-    const company = await Company.findByPk(companyId);
-    if (!company) throw new appError("Company not found", 404);
-
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file); // للتصحيح
-
-    const branch = await Branch.create({
+    // إعداد بيانات الفرع
+    const branchData = {
       companyId,
-      name,
-      icon, // حفظ المسار النصي
-      address,
-      phoneNumber,
-      email,
-      zone: zone || null,
-      isActive: isActive === "true" || isActive === true,
-    });
+      name: req.body.name,
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      zone: req.body.zone || null,
+      isActive: req.body.isActive === "true" || req.body.isActive === true,
+    };
+
+    // إضافة مسار الأيقونة إذا تم رفعها
+    if (uploadedFiles.length > 0) {
+      branchData.icon = uploadedFiles[0].link;
+    }
+
+    // التحقق من وجود الشركة
+    const company = await Company.findByPk(companyId);
+    if (!company) throw new appError("الشركة غير موجودة", 404);
+
+    // إنشاء الفرع
+    const branch = await Branch.create(branchData);
 
     res.status(201).json({ success: true, data: branch });
   } catch (error) {
@@ -111,6 +156,7 @@ exports.createBranch = async (req, res, next) => {
   }
 };
 
+// جلب فروع الشركة
 exports.getCompanyBranches = async (req, res, next) => {
   try {
     const branches = await Branch.findAll({ where: { companyId: req.params.id } });
@@ -122,6 +168,3 @@ exports.getCompanyBranches = async (req, res, next) => {
     next(error);
   }
 };
-
-// Middleware لرفع الملف
-exports.uploadBranchIcon = uploadFile("icon");
