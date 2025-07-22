@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const branchController = require("../controllers/branchesController");
+const storageController = require("../controllers/storageController");
 
-// Create a new branch
-router.post("/", branchController.createBranch);
-
-// Get all branches
-router.get("/", branchController.getAllBranches);
-
-// Get a single branch by ID
-router.get("/:id", branchController.getBranchById);
-
-// Update a branch
-router.patch("/:id", branchController.updateBranch);
-
-// Delete a branch
-router.delete("/:id", branchController.deleteBranch);
+router.route("/").get(branchController.getAllBranches);
+router.route("/:id/storages").post(branchController.createStorage).get(branchController.getBranchStorages);
+router
+  .route("/:id")
+  .get(branchController.getBranchById)
+  .patch(branchController.updateBranch)
+  .delete(branchController.deleteBranch);
 
 module.exports = router;

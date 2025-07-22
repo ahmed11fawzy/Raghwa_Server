@@ -1,13 +1,20 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../Config/dbConfig");
 
-const Company = sequelize.define("company", {
+const Company = sequelize.define("Company", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+
+  // ! Company information
+
+  arabicName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  englishName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -15,13 +22,43 @@ const Company = sequelize.define("company", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  address: {
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  // ! Address information
+
+  country: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  neighborhood: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  street: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  postalCode: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  // ! Contact information
+
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  telephoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   email: {
     type: DataTypes.STRING,
@@ -32,15 +69,43 @@ const Company = sequelize.define("company", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
+  // ! legal informations
   taxRegistrationNumber: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  description: {
+  commercialRegistrationNumber: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+
+  // ! Attachments needed
+  commercialRegistrationNumberAttachment: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  logo: {
+  taxRegistrationNumberAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  licenceAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  qualityCertificateAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  logoAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  buildingsAttachment: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  anotherAttachments: {
     type: DataTypes.STRING,
     allowNull: true,
   },
