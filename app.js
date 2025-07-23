@@ -25,13 +25,21 @@ const compositeProductRoutes = require("./routes/compositeProductsRoutes");
 const app = express();
 
 // ! Middlewares
+const allowedOrigins = ["http://localhost:5173", "http://localhost:8080"];
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from your frontend
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
-    credentials: true, // Allow cookies or credentials if needed
+    origin: function (origin, callback) {
+      // للسيرفر الداخلي أو Postman مثلاً مفيهوش origin
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 

@@ -18,6 +18,10 @@ const Company = sequelize.define("Company", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  code: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   symbol: {
     type: DataTypes.STRING,
     allowNull: false,
