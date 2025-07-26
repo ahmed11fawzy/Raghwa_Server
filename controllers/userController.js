@@ -2,10 +2,36 @@ const User = require("../Model/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { deleteOne, updateOne, getOne, getAll } = require("./factoryHandler");
-const { Branch, Section } = require("../Model");
+const { Branch, Section, Role, UserRole } = require("../Model");
+const { where } = require("sequelize");
 
-exports.getAllUsers = getAll(User);
-exports.getUser = getOne(User);
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+  const offset = (page - 1) * limit;
+  const users = await User.findAndCountAll({
+    include: [
+      { model: Branch, attributes: ["name"] },
+      { model: Section, attributes: ["sectionName"] },
+      { model: Role, attributes: ["roleName"] },
+    ],
+    attributes: { exclude: ["password", "branchId", "sectionId"] }, // Exclude password field
+    offset,
+    limit,
+  });
+
+  res.status(200).json({
+    status: "succeed",
+    data: users.rows,
+    totalCount: users.count,
+    totalPages: Math.ceil(users.count / limit),
+  });
+});
+
+exports.getUser = catchAsync(async (req, res, next) => {
+  const { id } = req.par;
+});
+
+// ! not working yet
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 
@@ -60,7 +86,7 @@ exports.deActivateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.CreateUser = catchAsync(async (req, res, next) => {
-  /*  const {
+  const {
     arabicName,
     englinshName,
     ssNumber,
@@ -76,6 +102,7 @@ exports.CreateUser = catchAsync(async (req, res, next) => {
     emergencyContactName,
     emergencyContactPhone,
     emergencyContactRelation,
+    role,
     branch,
     section,
     salary,
@@ -87,12 +114,12 @@ exports.CreateUser = catchAsync(async (req, res, next) => {
     certificates,
     contract,
     anotherAttachments,
-  } = req.body; */
+  } = req.body;
 
   // TODO 1) Get branch ,section ids
 
   const branchId = await Branch.findOne({
-    name: req.body.branch,
+    name: branch,
   });
   console.log("🚀 ~ branchId:", branchId);
 
@@ -100,17 +127,67 @@ exports.CreateUser = catchAsync(async (req, res, next) => {
     return next(new AppError("Branch not found", 404));
   }
 
+  // TODO 2) check if section is exist in this branch
   const sectionId = await Section.findOne({
-    name: req.body.section,
+    name: section,
   });
   console.log("🚀 ~ sectionId:", sectionId);
   if (!sectionId) {
     return next(new AppError("Section not found", 404));
   }
 
-  // const newUser = await User.create(req.body);
+  // TODO 3) Role check and assigning role with user to user role tabel
+  const roleData = await Role.findOne({
+    where: { roleName: role },
+  });
+  console.log("🚀 ~ roleData:", roleData);
 
+  if (!roleData) {
+    return next(new AppError("Role not found", 404));
+  }
+
+  //  TODO 4) Create user
+  const newUser = await User.create({
+    arabicName,
+    englinshName,
+    ssNumber,
+    email,
+    password,
+    phoneNumber,
+    telephoneNumber,
+    country,
+    city,
+    nighborhood,
+    street,
+    postalCode,
+    emergencyContactName,
+    emergencyContactPhone,
+    emergencyContactRelation,
+    branchId: branchId.id,
+    sectionId: sectionId.id,
+    salary,
+    active,
+    startDate,
+    profilePicture,
+    idCardPicture,
+    resume,
+    certificates,
+    contract,
+    anotherAttachments,
+  });
+
+  if (!newUser) {
+    return next(new AppError("Failed to create user", 400));
+  }
+  // TODO 5) Assigning role to user
+
+  const userRole = await UserRole.create({
+    userId: newUser.id,
+    roleId: roleData.id,
+  });
+  console.log("🚀 ~ userRole:", userRole);
   res.status(201).json({
     status: "succeed",
+    message: "User created successfully",
   });
 });

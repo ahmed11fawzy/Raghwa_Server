@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../Config/sequelize");
+const bcrypt = require("bcrypt");
 
 const User = sequelize.define(
   "User",
@@ -139,7 +140,23 @@ const User = sequelize.define(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Enable createdAt and updatedAt
+    hooks: {
+      // Hash password before creating a new user
+      beforeCreate: async (user) => {
+        if (user.password) {
+          const saltRounds = 10; // Number of salt rounds for bcrypt
+          user.password = await bcrypt.hash(user.password, saltRounds);
+        }
+      },
+      // Hash password before updating (if password is changed)
+      beforeUpdate: async (user) => {
+        if (user.changed("password")) {
+          const saltRounds = 10;
+          user.password = await bcrypt.hash(user.password, saltRounds);
+        }
+      },
+    },
   }
 );
 
