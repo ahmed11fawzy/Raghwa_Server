@@ -1,13 +1,13 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
 
-const Storage = sequelize.define("storage", {
+const sequelize = require("../Config/sequelize");
+
+const Storage = sequelize.define("Storage", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-
   // ! Storage information
   arabicName: {
     type: DataTypes.STRING,
@@ -118,7 +118,6 @@ const Storage = sequelize.define("storage", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-
   branchId: {
     type: DataTypes.INTEGER,
     allowNull: false,
