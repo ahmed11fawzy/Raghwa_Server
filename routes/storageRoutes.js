@@ -12,12 +12,15 @@ const storageFileFields = [
   "inventoryReportsAttachment",
   "anotherAttachments",
 ];
+
 router.route("/").get(storageController.getAllStorages);
 router.route("/:id/products").post(storageController.addProductToStorage).get(storageController.getStorageProducts);
 router
   .route("/:id")
   .get(storageController.getStorageById)
+
   .patch(dynamicUpload(storageFileFields), storageController.updateStorage)
+
   .delete(storageController.deleteStorage);
 
 module.exports = router;

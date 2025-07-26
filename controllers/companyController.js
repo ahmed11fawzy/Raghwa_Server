@@ -1,6 +1,7 @@
 const { where } = require("sequelize");
 const appError = require("../utils/appError");
 const { Company, Branch } = require("../Model");
+
 const { uploadFilesLocally } = require("../middlewares/fileUpload");
 
 // حقول الملفات في موديل Company
@@ -42,6 +43,7 @@ exports.createCompany = async (req, res, next) => {
 };
 
 // جلب كل الشركات
+
 exports.getAllCompanies = async (req, res, next) => {
   try {
     const companies = await Company.findAll();
@@ -55,6 +57,9 @@ exports.getAllCompanies = async (req, res, next) => {
 };
 
 // جلب شركة بـ ID
+
+// Get single company by ID
+
 exports.getCompanyById = async (req, res, next) => {
   try {
     const company = await Company.findByPk(req.params.id);
@@ -70,7 +75,8 @@ exports.getCompanyById = async (req, res, next) => {
   }
 };
 
-// تحديث شركة
+// Update company
+
 exports.updateCompany = async (req, res, next) => {
   try {
     const company = await Company.findByPk(req.params.id);
@@ -148,6 +154,7 @@ exports.createBranch = async (req, res, next) => {
 };
 
 // جلب فروع الشركة
+
 exports.getCompanyBranches = async (req, res, next) => {
   try {
     const branches = await Branch.findAll({ where: { companyId: req.params.id } });
@@ -159,3 +166,6 @@ exports.getCompanyBranches = async (req, res, next) => {
     next(error);
   }
 };
+
+// Middleware لرفع الملف
+exports.uploadBranchIcon = uploadFile("icon");
