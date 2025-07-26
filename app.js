@@ -18,6 +18,10 @@ const productRouter = require("./routes/productRoutes");
 const storageRouter = require("./routes/storageRoutes");
 const companyRouter = require("./routes/companyRoutes");
 const branchRouter = require("./routes/branchesRoutes");
+const roleRouter = require("./routes/roleRoutes");
+const permissionRouter = require("./routes/permissionRoutes");
+const rolePermissionRouter = require("./routes/rolePermissionRoutes");
+const authRouter = require("./routes/authRoutes");
 // ! start express app & connect to db
 
 const app = express();
@@ -79,12 +83,17 @@ app.use((req, res, next) => {
 });
 
 // ! Routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/companies", companyRouter);
 app.use("/api/v1/branches", branchRouter);
 app.use("/api/v1/storages", storageRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/permissions", permissionRouter);
+app.use("/api/v1/rolepermissions", rolePermissionRouter);
+
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));

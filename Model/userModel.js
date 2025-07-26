@@ -1,17 +1,26 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
+const sequelize = require("../Config/sequelize");
 
 const User = sequelize.define(
-  "user",
+  "User",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    arabicName: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    englinshName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ssNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -22,15 +31,111 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM("admin", "user", "manger", "employee", "accountant"),
+    phoneNumber: {
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "employee",
+      unique: true,
+    },
+    telephoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    // ! User Address DATA
+    country: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    nighborhood: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    street: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    postalCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    // ! Emergency contact DATA
+
+    emergencyContactName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    emergencyContactPhone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    emergencyContactRelation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    // ! position DATA
+    branchId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Branches",
+        key: "id",
+      },
+    },
+    sectionId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Sections",
+        key: "id",
+      },
+    },
+
+    // ! User Activatoin , Salaries and other DATA
+
+    salary: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
     },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    startDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+
+    // ! User Attachments DATA
+    profilePicture: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    idCardPicture: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resume: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    certificates: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    contract: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    anotherAttachments: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

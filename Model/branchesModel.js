@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
+const sequelize = require("../Config/sequelize");
 
-const Branch = sequelize.define("branch", {
+const Branch = sequelize.define("Branch", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

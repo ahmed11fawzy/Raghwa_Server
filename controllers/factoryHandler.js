@@ -2,105 +2,107 @@ const ApiFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
-exports.getAll = (Model) =>
+const { Op } = require("sequelize");
+
+// Factory function to create a record
+exports.createOne = (Model, data) =>
   catchAsync(async (req, res, next) => {
-    /* const reqQuery = {...req.query};
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((el) => delete reqQuery[el]);
-    // 1) Filtering
-    let queryStr = JSON.stringify(reqQuery);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    // console.log(JSON.parse(queryStr))
-    let query = Tour.find(JSON.parse(queryStr));
-    // 2) Sorting
-    if(req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      console.log(sortBy);
-      query = query.sort(sortBy);
-    }else {
-      query.sort('-createdAt');
-    }
-    // 3) Field limiting
-    if(req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields); 
-    }else {
-      query = query.select('-__v');
-    }
-
-    // 4) Pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit); */
-
-    // ? used for enable nested params form tours to get reviews
-    let getOnly = {};
-    if (req.params.tourId) getOnly.tour = req.params.tourId;
-
-    // using the APIFeatures class to filter, sort, limit and paginate the data
-    const apiFeatures = new ApiFeatures(Model.find(getOnly), req.query).filter().sort().limit().paginate();
-    const doc = await apiFeatures.query;
-    res.status(200).json({
-      status: "success",
-      count: doc.length,
-      data: {
-        data: doc,
-      },
+    let fields = {};
+    data.forEach((field) => {
+      if (req.body[field]) {
+        fields = {
+          ...fields,
+          field: req.body[field],
+        };
+      }
     });
-  });
-exports.createOne = (Model) =>
-  catchAsync(async (req, res, next) => {
-    const doc = await Model.create(req.body);
+
+    const record = await Model.create();
+
     res.status(201).json({
       status: "success",
-      data: {
-        data: doc,
-      },
+      data: record,
+      message: `${Model.name} created successfully`,
     });
   });
 
-exports.getOne = (Model, popOptions) =>
+// Factory function to get a single record by ID or other unique identifier
+exports.getOne = (Model, identifier, options = {}) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
-    if (popOptions) query = query.populate(popOptions);
-    const doc = await query;
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+    const where = typeof identifier === "object" ? identifier : { id: identifier };
+    const record = await Model.findOne({
+      where,
+      ...options, // Include options like include, attributes, etc.
+    });
+
+    if (!record) {
+      return next(new AppError(`${Model.name} not found`, 404));
     }
+
     res.status(200).json({
       status: "success",
-      data: {
-        data: doc,
-      },
+      data: record,
+      message: `${Model.name} retrieved successfully`,
     });
   });
-exports.deleteOne = (Model) => {
-  return catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
+
+// Factory function to get multiple records with optional filtering and pagination
+exports.getAll = (Model, options = {}) =>
+  catchAsync(async (req, res, next) => {
+    const { where = {}, limit = 10, offset = 0, order = [["createdAt", "DESC"]], ...otherOptions } = options;
+
+    const records = await Model.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+      ...otherOptions, // Include options like include, attributes, etc.
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: records.rows,
+      total: records.count,
+      message: `${Model.name}s retrieved successfully`,
+    });
+  });
+
+// Factory function to update a record by ID or other unique identifier
+exports.updateOne = (Model, identifier, data, options = {}) =>
+  catchAsync(async (req, res, next) => {
+    const where = typeof identifier === "object" ? identifier : { id: identifier };
+    const [updatedCount, updatedRecords] = await Model.update(data, {
+      where,
+      returning: true, // Return the updated record(s)
+      ...options,
+    });
+
+    if (updatedCount === 0) {
+      return next(new AppError(`${Model.name} not found`, 404));
     }
+
+    res.status(200).json({
+      status: "success",
+      data: updatedRecords[0] || updatedRecords,
+      message: `${Model.name} updated successfully`,
+    });
+  });
+
+// Factory function to delete a record by ID or other unique identifier
+exports.deleteOne = (Model, identifier, options = {}) =>
+  catchAsync(async (req, res, next) => {
+    const where = typeof identifier === "object" ? identifier : { id: identifier };
+    const deletedCount = await Model.destroy({
+      where,
+      ...options,
+    });
+
+    if (deletedCount === 0) {
+      return next(new AppError(`${Model.name} not found`, 404));
+    }
+
     res.status(204).json({
       status: "success",
-      data: null,
-    });
-  });
-};
-
-exports.updateOne = (Model) =>
-  catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
-    }
-    res.status(200).json({
-      status: "success",
-      data: {
-        data: doc,
-      },
+      message: `${Model.name} deleted successfully`,
     });
   });
