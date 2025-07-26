@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-const { sequelize } = require("../Config/sequelize.js");
+const sequelize = require("../Config/sequelize");
 
 const Branch = sequelize.define("branch", {
   id: {
