@@ -3,6 +3,7 @@ const appError = require("../utils/appError");
 const { Company, Branch } = require("../Model");
 
 const { uploadFilesLocally } = require("../middlewares/fileUpload");
+const { uploadFile } = require("../utils/fileUpload");
 
 // حقول الملفات في موديل Company
 const companyFileFields = [

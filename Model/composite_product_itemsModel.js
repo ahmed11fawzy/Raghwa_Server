@@ -1,6 +1,6 @@
 // models/composite_product_itemsModel.js
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
+const sequelize = require("../Config/sequelize");
 
 const CompositeProductItem = sequelize.define("CompositeProductItem", {
   id: {
