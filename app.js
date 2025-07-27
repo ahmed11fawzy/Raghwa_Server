@@ -25,7 +25,7 @@ const compositeProductRoutes = require("./routes/compositeProductsRoutes");
 const app = express();
 
 // ! Middlewares
-const allowedOrigins = ["http://localhost:5173", "http://localhost:8080"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:8080", "http://localhost:8081"];
 
 app.use(
   cors({

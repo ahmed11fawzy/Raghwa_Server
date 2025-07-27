@@ -49,7 +49,7 @@ const Branch = sequelize.define("branch", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  telephoneNumber: {
+  phoneNumber: {
     type: DataTypes.STRING,
     allowNull: true,
   },
