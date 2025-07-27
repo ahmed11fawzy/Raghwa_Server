@@ -1,3 +1,4 @@
+///////////////////////////////////////////////////////////////////
 const express = require("express");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -17,9 +18,12 @@ const serviceRouter = require("./routes/serviceRoutes");
 const productRouter = require("./routes/productRoutes");
 const storageRouter = require("./routes/storageRoutes");
 const companyRouter = require("./routes/companyRoutes");
-const branchRouter = require("./routes/branchesRoutes");
 const compositeProductRoutes = require("./routes/compositeProductsRoutes");
-
+const branchRouter = require("./routes/branchesRoutes");
+const roleRouter = require("./routes/roleRoutes");
+const permissionRouter = require("./routes/permissionRoutes");
+const rolePermissionRouter = require("./routes/rolePermissionRoutes");
+const authRouter = require("./routes/authRoutes");
 // ! start express app & connect to db
 
 const app = express();
@@ -29,17 +33,10 @@ const allowedOrigins = ["http://localhost:5173", "http://localhost:8080", "http:
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // للسيرفر الداخلي أو Postman مثلاً مفيهوش origin
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+    origin: "http://localhost:8080", // Allow requests from your frontend
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+    credentials: true, // Allow cookies or credentials if needed
   })
 );
 
@@ -89,6 +86,7 @@ app.use((req, res, next) => {
 });
 
 // ! Routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/companies", companyRouter);
 app.use("/api/v1/branches", branchRouter);
@@ -96,6 +94,10 @@ app.use("/api/v1/storages", storageRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/compositeproducts", compositeProductRoutes);
+app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/permissions", permissionRouter);
+app.use("/api/v1/rolepermissions", rolePermissionRouter);
+
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
   next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));

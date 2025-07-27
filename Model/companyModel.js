@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
+
+const sequelize = require("../Config/sequelize");
 
 const Company = sequelize.define("Company", {
   id: {
@@ -18,10 +19,12 @@ const Company = sequelize.define("Company", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
   code: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+
   symbol: {
     type: DataTypes.STRING,
     allowNull: false,

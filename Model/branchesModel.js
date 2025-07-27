@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../Config/dbConfig");
+
+const sequelize = require("../Config/sequelize");
 
 const Branch = sequelize.define("branch", {
   id: {
@@ -7,7 +8,6 @@ const Branch = sequelize.define("branch", {
     primaryKey: true,
     autoIncrement: true,
   },
-
   // ! Branch information
   arabicName: {
     type: DataTypes.STRING,
@@ -49,15 +49,17 @@ const Branch = sequelize.define("branch", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  phoneNumber: {
+  telephoneNumber: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
   email: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
+
   website: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -109,6 +111,11 @@ const Branch = sequelize.define("branch", {
     allowNull: true,
   },
   anotherAttachments: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  zone: {
     type: DataTypes.STRING,
     allowNull: true,
   },

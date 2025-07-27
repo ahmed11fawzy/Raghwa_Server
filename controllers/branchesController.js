@@ -1,6 +1,7 @@
 const { Branch, Storage, Company } = require("../Model");
 const AppError = require("../utils/appError");
 const { uploadFilesLocally } = require("../middlewares/fileUpload");
+
 // Get all branches
 exports.getAllBranches = async (req, res) => {
   try {
@@ -40,6 +41,7 @@ exports.updateBranch = async (req, res, next) => {
     if (!branch) {
       throw new AppError("Branch not found", 404);
     }
+
     // معالجة الملفات المرفوعة محليًا إذا وُجدت
     const uploadedFiles = await uploadFilesLocally(req.files, branchFileFields);
 
@@ -49,6 +51,7 @@ exports.updateBranch = async (req, res, next) => {
       updateData[file.fieldName] = file.link;
     });
     await branch.update(updateData);
+
     res.status(200).json({ success: true, data: branch });
   } catch (error) {
     next(error);
@@ -92,6 +95,7 @@ exports.createStorage = async (req, res) => {
     });
 
     const storage = await Storage.create(storageData);
+
     res.status(201).json({ success: true, data: storage });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

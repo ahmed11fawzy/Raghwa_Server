@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const branchController = require("../controllers/branchesController");
 const storageController = require("../controllers/storageController");
+
 const { dynamicUpload } = require("../middlewares/fileUpload");
 
 const branchFileFields = ["branchImageAttachment", "licenceAttachment", "anotherAttachments"];
@@ -23,6 +24,7 @@ router
   .route("/:id")
   .get(branchController.getBranchById)
   .patch(dynamicUpload(branchFileFields), branchController.updateBranch)
+
   .delete(branchController.deleteBranch);
 
 module.exports = router;
