@@ -2,16 +2,16 @@ const User = require("../Model/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { deleteOne, updateOne, getOne, getAll } = require("./factoryHandler");
-
 const { Branch, Section, Role, UserRole } = require("../Model");
 const { where } = require("sequelize");
+const { uploadFilesLocally } = require("../middlewares/fileUpload");
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const { page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
   const users = await User.findAndCountAll({
     include: [
-      { model: Branch, attributes: ["name"] },
+      { model: Branch, attributes: [] },
       { model: Section, attributes: ["sectionName"] },
       { model: Role, attributes: ["roleName"] },
     ],
@@ -91,94 +91,36 @@ exports.deActivateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.CreateUser = catchAsync(async (req, res, next) => {
-  const {
-    arabicName,
-    englinshName,
-    ssNumber,
-    email,
-    password,
-    phoneNumber,
-    telephoneNumber,
-    country,
-    city,
-    nighborhood,
-    street,
-    postalCode,
-    emergencyContactName,
-    emergencyContactPhone,
-    emergencyContactRelation,
-    role,
-    branch,
-    section,
-    salary,
-    active,
-    startDate,
-    profilePicture,
-    idCardPicture,
-    resume,
-    certificates,
-    contract,
-    anotherAttachments,
-  } = req.body;
-
-  // TODO 1) Get branch ,section ids
-
-  const branchId = await Branch.findOne({
-    name: branch,
-  });
-  console.log("🚀 ~ branchId:", branchId);
-
-  if (!branchId) {
-    return next(new AppError("Branch not found", 404));
-  }
-
-  // TODO 2) check if section is exist in this branch
-  const sectionId = await Section.findOne({
-    name: section,
-  });
-  console.log("🚀 ~ sectionId:", sectionId);
-  if (!sectionId) {
-    return next(new AppError("Section not found", 404));
-  }
-
+  const { role } = req.body;
   // TODO 3) Role check and assigning role with user to user role tabel
   const roleData = await Role.findOne({
     where: { roleName: role },
   });
-  console.log("🚀 ~ roleData:", roleData);
 
   if (!roleData) {
     return next(new AppError("Role not found", 404));
   }
 
+  // Handle uploaded files
+  const userFileFields = [
+    "profilePicture",
+    "idCardPicture",
+    "resume",
+    "certificates",
+    "contract",
+    "anotherAttachments",
+  ];
+  const uploadedFiles = await uploadFilesLocally(req.files, userFileFields);
+  console.log(req.body);
+  // Prepare user data
+  const userData = { ...req.body };
+  uploadedFiles.forEach((file) => {
+    userData[file.fieldName] = file.link;
+  });
+
   //  TODO 4) Create user
   const newUser = await User.create({
-    arabicName,
-    englinshName,
-    ssNumber,
-    email,
-    password,
-    phoneNumber,
-    telephoneNumber,
-    country,
-    city,
-    nighborhood,
-    street,
-    postalCode,
-    emergencyContactName,
-    emergencyContactPhone,
-    emergencyContactRelation,
-    branchId: branchId.id,
-    sectionId: sectionId.id,
-    salary,
-    active,
-    startDate,
-    profilePicture,
-    idCardPicture,
-    resume,
-    certificates,
-    contract,
-    anotherAttachments,
+    ...userData,
   });
 
   if (!newUser) {
@@ -190,7 +132,6 @@ exports.CreateUser = catchAsync(async (req, res, next) => {
     userId: newUser.id,
     roleId: roleData.id,
   });
-  console.log("🚀 ~ userRole:", userRole);
   res.status(201).json({
     status: "succeed",
     message: "User created successfully",

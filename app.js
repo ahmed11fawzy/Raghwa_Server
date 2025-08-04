@@ -24,6 +24,8 @@ const roleRouter = require("./routes/roleRoutes");
 const permissionRouter = require("./routes/permissionRoutes");
 const rolePermissionRouter = require("./routes/rolePermissionRoutes");
 const authRouter = require("./routes/authRoutes");
+const sectionRouter = require("./routes/sectionRoutes");
+
 // ! start express app & connect to db
 
 const app = express();
@@ -33,7 +35,7 @@ const allowedOrigins = ["http://localhost:5173", "http://localhost:8080", "http:
 
 app.use(
   cors({
-    origin: "http://localhost:8080", // Allow requests from your frontend
+    origin: ["http://localhost:5173", "http://localhost:8080"], // Allow requests from your frontend
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
     credentials: true, // Allow cookies or credentials if needed
@@ -97,6 +99,7 @@ app.use("/api/v1/compositeproducts", compositeProductRoutes);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/permissions", permissionRouter);
 app.use("/api/v1/rolepermissions", rolePermissionRouter);
+app.use("/api/v1/sections", sectionRouter);
 
 // ! handling unhandled routes
 const server = app.use((req, res, next) => {
