@@ -25,6 +25,7 @@ exports.getAllRoles = catchAsync(async (req, res, next) => {
 exports.createRole = catchAsync(async (req, res, next) => {
   const transaction = await sequelize.transaction();
   const { roleName, description, Permissions } = req.body;
+  console.log("🚀 ~ roleName:", roleName);
 
   // TODO 1. get all permissions name from Permissions array of objects
   const PermissionsNames = [...new Set(Permissions.flatMap((permission) => Object.keys(permission)))];
@@ -97,7 +98,7 @@ exports.updateRole = catchAsync(async (req, res, next) => {
     });
 
     if (existingPermissions.length !== Permissions.length) {
-      return next(new AppError("Some permissions not found", 404));
+      return next(new appError("Some permissions not found", 404));
     }
 
     // Clear existing role permissions
@@ -117,5 +118,20 @@ exports.updateRole = catchAsync(async (req, res, next) => {
     data: {
       role: role,
     },
+  });
+});
+
+exports.deleteRole = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const role = await Role.findByPk(id);
+  if (!role) {
+    return next(new appError("Role not found", 404));
+  }
+  // Remove related role permissions first (optional, for clean DB)
+  await RolePermission.destroy({ where: { roleId: id } });
+  await role.destroy();
+  res.status(204).json({
+    status: "success",
+    message: "Role deleted successfully",
   });
 });
