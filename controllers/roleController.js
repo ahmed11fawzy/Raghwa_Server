@@ -67,3 +67,54 @@ exports.createRole = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.updateRole = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { roleName, description, Permissions } = req.body;
+  console.log("🚀 ~ updateRole ~ id:", id);
+  // get Role from DB
+
+  const role = await Role.findByPk(id);
+  if (!role) {
+    throw new Error("Role not found");
+  }
+
+  // Update multiple fields
+  role.set({
+    roleName,
+    description,
+  });
+
+  await role.save();
+  // check if Permissions are provided is already exist
+
+  if (Permissions && Permissions.length > 0) {
+    const PermissionsNames = [...new Set(Permissions.flatMap((permission) => Object.keys(permission)))];
+    console.log("🚀 ~ PermissionsNames:", PermissionsNames);
+    const existingPermissions = await Permission.findAll({
+      where: { permissionName: { [Op.in]: PermissionsNames } },
+    });
+
+    if (existingPermissions.length !== Permissions.length) {
+      return next(new AppError("Some permissions not found", 404));
+    }
+
+    // Clear existing role permissions
+    await RolePermission.destroy({ where: { roleId: id } });
+
+    //  Create new role permissions
+    const rolePermissions = existingPermissions.map((permission) => ({
+      roleId: id,
+      permissionId: permission.id,
+    }));
+
+    await RolePermission.bulkCreate(rolePermissions);
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      role: role,
+    },
+  });
+});
