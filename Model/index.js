@@ -36,7 +36,14 @@ Role.belongsToMany(Permission, { through: RolePermission, foreignKey: "roleId" }
 Permission.belongsToMany(Role, { through: RolePermission, foreignKey: "permissionId" });
 
 RolePermission.belongsTo(Role, { foreignKey: "roleId" });
-RolePermission.belongsTo(Permission, { foreignKey: "permissionId" });
+RolePermission.belongsTo(Permission, {
+  foreignKey: "permissionId",
+  onDelete: "RESTRICT", // Prevent deletion if associated
+});
+Permission.hasMany(RolePermission, {
+  foreignKey: "permissionId",
+  onDelete: "RESTRICT",
+});
 
 // TODO 2) relations between  Product , Service & ProductService
 

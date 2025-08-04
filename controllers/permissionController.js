@@ -1,5 +1,5 @@
 const { createOne, getAll } = require("../controllers/factoryHandler");
-const { Permission } = require("../Model");
+const { Permission, RolePermission } = require("../Model");
 const catchAsync = require("../utils/catchAsync");
 
 exports.createPermission = catchAsync(async (req, res, next) => {
@@ -53,9 +53,21 @@ exports.updatePermission = catchAsync(async (req, res, next) => {
 
 exports.deletePermission = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  const rolePermissions = await RolePermission.findAll({
+    where: { permissionId: id },
+  });
+
+  if (rolePermissions.length > 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Cannot delete permission because it is associated with one or more roles",
+    });
+  }
+
+  // Find the permission
   const permission = await Permission.findByPk(id);
   if (!permission) {
-    return next(new Error("Permission not found"));
+    return res.status(404).json({ success: false, message: "Permission not found" });
   }
   await permission.destroy();
   res.status(204).json({
