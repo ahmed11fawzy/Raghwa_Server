@@ -3,6 +3,7 @@ const sequelize = require("../Config/sequelize");
 const { Role, RolePermission, Permission } = require("../Model");
 const catchAsync = require("../utils/catchAsync");
 const { createOne, getOne, getAll, updateOne, deleteOne } = require("./factoryHandler");
+const appError = require("../utils/appError");
 
 exports.getAllRoles = catchAsync(async (req, res, next) => {
   const roles = await Role.findAll({
@@ -37,7 +38,7 @@ exports.createRole = catchAsync(async (req, res, next) => {
   });
   if (existingPermissions.length !== PermissionsNames.length) {
     await transaction.rollback();
-    return next(new AppError("Some permissions not found", 404));
+    return next(new appError("Some permissions not found", 404));
   }
 
   console.log("🚀 ~ existingPermissions:", existingPermissions);

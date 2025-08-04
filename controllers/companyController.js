@@ -146,6 +146,7 @@ exports.createBranch = async (req, res, next) => {
     if (!company) throw new appError("الشركة غير موجودة", 404);
 
     // إنشاء الفرع
+    console.log(branchData);
     const branch = await Branch.create(branchData);
 
     res.status(201).json({ success: true, data: branch });
